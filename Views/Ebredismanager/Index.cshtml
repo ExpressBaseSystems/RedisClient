@@ -64,7 +64,7 @@
                 <div class="row">
                     <div class="col-md-9">
                         <ul class="nav nav-tabs">
-                            @*<li id="btninfo"><a class="active" role="tab" href="#infos" data-toggle="tab">Info</a></li>*@
+                            <li id="btninfo"><a class="active" role="tab" href="#infos" data-toggle="tab">Info</a></li>
                             <li class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add Keys <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -78,9 +78,8 @@
                             <li id="btnkeys"><a role="tab" href="#dispvalue" data-toggle="tab">Display keys</a></li>
                             @*<li id="Btnsrch"><a href="#">Search</a></li>*@
                             <li id="tabterminal"><a class="active" role="tab" href="#termnl" data-toggle="tab">Terminal</a></li>
-                            <li id="tabkeydel"><a href="#" role="tab" data-toggle="modal" data-target="#modaldelete">Delete</a></li>
                             <li id="tabgrpinsert"><a role="tab" href="#" data-toggle="modal" data-target="#modalgrp">Create Group</a></li>
-
+                            <li id="tablog"><a role="tab"href="#tbllog" data-toggle="tab">Activity log</a></li>
                         </ul>
                     </div>
                     <div class="cl-md-2">
@@ -97,12 +96,12 @@
 
                 <div class="row">
                     <div class="tab-content">
-                        @*<div id="infos" class="tab-pane fade in active">
+                        <div id="infos" class="tab-pane fade in active">
                             <input type="text" id="tl" class="margin0 marginleft" value="" placeholder="Value" padding-top:1px; padding-left: 1px;
                                    padding-right: 1px;" />
-                        </div>*@
+                        </div>
 
-                        <div id="termnl" class="tab-pane active fadeposition-relative borderstyle  margin0 marginleft scrol" style=" padding-top:1px; padding-left: 1px;
+                        <div id="termnl" class="tab-pane fade position-relative borderstyle  margin0 marginleft scrol" style=" padding-top:1px; padding-left: 1px;
                               padding-right: 1px;">
                             <div id="divterminal" style=" background-color: #0f1315; color: #f5f2f2;" class="scrol">
                                 >> <input type="text" class="active terminalcls txtboxwidth " style=" background-color: #0f1315; color: #6ce890;" autofocus>
@@ -118,22 +117,30 @@
                                 <ul id="sublist" class="nav nav-pills nav-stacked"></ul>
                             </div>
                             <div class="row">
-                                <div id="smallbtn" class="col-md-offset-4" hidden>
-                                    <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs" />
-                                    <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info" role="tab" href="#" data-toggle="modal" data-target="#modalrename" />
-                                    <input type="button" id="btnjsonview" value="JSON View" class="btn btn-info btn-xs" />
-                                    <input type="button" id="btnedit" value="Edit" class="btn btn-info btn-xs" />
-
-                                </div>
-                               
-
-                                <div id="outerdisp" class=" position-relative borderstyle  col-md-8  margin0 marginleft scrol" style=" padding-top:1px; padding-left: 1px;
+                                <div id="outerdisp" class=" position-relative borderstyle  col-md-8  margin0 marginleft " style=" padding-top:1px; padding-left: 1px;
                                       padding-right: 1px;">
-                                    <div id="savediv" class="borderstyle"></div>
-                                    <div id="dispval" contenteditable="true"></div>
+                                    <div id="smallbtn" hidden style=" margin-bottom: 3px;">
+                                        <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs" />
+                                        <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info" role="tab" href="#" data-toggle="modal" data-target="#modalrename" />
+                                        <input type="button" id="btnjsonview" value="JSON View" class="btn btn-info btn-xs" />
+                                        <input type="button" id="btnedit" value="Edit" class="btn btn-info btn-xs" />
+
+                                    </div>
+                                    <div>
+
+                                    </div>
+                                    <div id="savediv" class=" position-relative borderstyle"  ></div>
+                                    <div id="dispval" class="scrol" contenteditable="true"></div>
                                 </div>
                             </div>
                         </div>
+                        <div  id="tbllog" class=" tab-pane fade">
+                            <table class="tablelog table table-striped table-bordered">
+                                <tr> <th>ID</th> <th>Time</th> <th>Command</th> </tr>
+                            </table>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
@@ -344,28 +351,7 @@
 
         </div>
     </div>
-    <!-- Modal delete key-->
-    <div class="modal fade" id="modaldelete" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Delete key</h4>
-                </div>
-                <div class="modal-body">
-                    <input type="text" id="txtdel" class="form-control" value="" placeholder="Key" />
-
-                </div>
-                <div class="modal-footer">
-
-                    <input type="button" id="btndel" value="Delete" class="btn btn-primary" data-dismiss="modal" />
-                </div>
-            </div>
-
-        </div>
-    </div>
+  
 
 
 
