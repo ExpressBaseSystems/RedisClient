@@ -148,7 +148,16 @@ namespace EbControllers
             {
                 val = _redis.GetAllEntriesFromHash(key_name);
             }
+            else if (type == "set")
+            {
+                val = _redis.GetAllItemsFromSet(key_name);
+            }
+            else if (type == "zset")
+            {
+                val = _redis.GetAllItemsFromSortedSet(key_name);
+            }
             return new FindValClass { Key = key_name, Obj = val, Type = type };
+
         }
 
 
@@ -211,12 +220,23 @@ namespace EbControllers
         public void ListValEdit(string l_keyid, string dict)
         {
             Dictionary<int, string> val = JsonConvert.DeserializeObject<Dictionary<int, string>>(dict);
+
+            int v = Convert.ToInt32(_redis.LLen(l_keyid));
+            int i;
+            for (i = v; i < val.Count; i++)
+            {
+                var lv = Encoding.UTF8.GetBytes(val[i]);
+                _redis.RPush(l_keyid, lv);
+
+            }
+
             foreach (var item in val)
             {
                 var listval = Encoding.UTF8.GetBytes(item.Value);
                 _redis.LSet(l_keyid, item.Key, listval);
             }
         }
+
         public void HashValEdit(string h_keyid, string dict)
         {
             Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);

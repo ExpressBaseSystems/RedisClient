@@ -168,11 +168,7 @@ var RedisClientJS = function () {
     this.listeditval = null;
     window.tp = null;
     this.keynm = null;
-
-
-   
-
-
+    
 
     this.init = function () {
 
@@ -183,7 +179,6 @@ var RedisClientJS = function () {
         $("#btninset").off("click").on("click", this.Keyinsertfn.bind(this));
         $("#btngrpinsert").off('click').on("click", this.GroupPatternfn.bind(this));
         $("#Btnsrch").off('click').on('click', this.Keysearchfn.bind(this));
-        $("#btndel").off('click').on('click', this.KeyDeletefn.bind(this));
         $("#btnregex").off('click').on('click', this.Regxfn.bind(this));
         $("#btnkeys").off('click').on('click', this.Allkeysfn.bind(this));
         $("#btnlpush").off('click').on('click', this.ListInsertLpushfn.bind(this));
@@ -268,7 +263,7 @@ var RedisClientJS = function () {
                         }
                         //<div style=" display: inline-block;  float: right; "  >  /div> 
                         else
-                            if (ob.type === "list") {
+                            if ((ob.type === "list") || (ob.type === "set") || (ob.type === "zset")) {
                                 var html = `<div>
                                                 <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}
                                                 <input type="button" id="btnlistedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-7" value="Save" />
@@ -276,20 +271,36 @@ var RedisClientJS = function () {
                                            </div >`
 
                                 let html1 = `<table class="listtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}">
-                                            <tr><th>#</th> <th>MEMBERS</th></tr>`;
+                                             <thead><tr><th>#</th> <th>MEMBERS</th></tr></thead><tbody>`;
 
                                 //this.SubName = $(ev.target).closest(".listtable").text();
                                 $.each(ob.obj, function (i) {
                                     var k = "lst" + i;
                                     html1 += `<tr id="${i}" tabindex="${i}" class="listlink"><td class="tdlistid"   style="width:5%" contenteditable="false">${i}</td> <td class="tdlistval">${ob.obj[i]}</td>
                                    </tr>`;
+
                                 });
-                                html1 += `</table>`;
+                                html1 += `</tbody></table><input type="button" class="btn btn-default btnl_add" value="+" id="btnl+" />`;
+
 
                                 // $("#dispval").empty().append(JSON.stringify(ob.obj));
+
                                 $("#savediv").empty().append(html);
                                 $(`#btnlistedit`).hide();
                                 $("#dispval").empty().append(html1);
+                                $(".btnl_add").hide();
+                                $(".btnl_add").click(function () {
+                                    this.incr += 1;
+
+                                    // let html = `<tr  class="listlink"><td>${ob.obj.length} </td><td></td></tr>`;
+                                    let html = `<tr id="${ob.obj.length}" tabindex="${ob.obj.length}" class="listlink"><td class="tdlistid"   style="width:5%" contenteditable="false">${ob.obj.length}</td> <td class="tdlistval"></td>
+                                   </tr>`;
+
+                                    $("table tbody").append(html);
+                                    ob.obj.length++;
+                                    // $(`#table_${this.subnm}`).append(html);
+
+                                }).bind(this);
                                 //$(".listsave").hide();
                             }
                             else
@@ -301,18 +312,30 @@ var RedisClientJS = function () {
                                            </div >`
                                     //border = "1" width = "100" style = "width:100%"
                                     var html = `<table  class="hashtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" >
-                                             <tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr>`;
+                                           <thead><tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr></thead><tbody>`;
                                     let c = 0;
                                     $.each(ob.obj, function (i, k) {
 
                                         html += `<tr  id="${c}" tabindex="${c}" class="hashlink"> <td style="width:5%" contenteditable="false"> ${c++} </td><td style="width:40%" class="tdhashfield">${i}</td><td class="tdhashval">${k}</td></tr>`;
                                     });
-                                    html += `</table>`;
+                                    html += `</tbody></table><input type="button" class="btn btn-default btnh_add" value="+" id="btnh+" />`
                                     // $("#dispval").empty().append(JSON.stringify(html));
                                     $("#savediv").empty().append(html2);
                                     $(`#btnhashedit`).hide();
                                     $("#dispval").empty().append(html);
+                                    $(".btnh_add").hide();
+                                    $(".btnh_add").click(function () {
+                                        this.incr += 1;
+                                        let html = `<tr  id="${c}"class="hashlink"> <td style="width:5%" contenteditable="false"> ${c++} </td><td style="width:40%" class="tdhashfield"></td><td class="tdhashval"></td></tr>`;
+
+
+                                        $("table tbody").append(html);
+                                        ob.obj.length++;
+                                        // $(`#table_${this.subnm}`).append(html);
+
+                                    }).bind(this);
                                 }
+
                     }
                 });
         }
@@ -416,30 +439,7 @@ var RedisClientJS = function () {
         }
     };
 
-    this.KeyDeletefn = function () {
-        if ($("#txtdel").val() != "") {
-            $.ajax({
-                url: "EbRedisManager/Keydeletes",
-                data: { textdel: $("#txtdel").val() },
-                cache: false,
-                type: "POST",
-                success: function (status) {
-                    if (status) {
-                        alert($("#txtdel").val() + " Deleted");
-                        $("#txtdel").val('');
-                        this.Allkeysfn();
-                    }
-                    else {
-                        alert("Key not found");
-                        $("#txtdel").val('');
-                    }
-                }.bind(this)
-            });
-        }
-        else {
-            alert("value cannot be empty");
-        }
-    };
+   
 
     this.GroupPatternfn = function () {
         if (($("#txtnm").val() != "") && ($("#txtptn").val() != "")) {
@@ -535,12 +535,15 @@ var RedisClientJS = function () {
             $("#btnlistedit").show();
             $("#dispval").attr('contenteditable', true);
             $("#savediv").attr('contenteditable', false);
+            $(".btnl_add").show();
             $("#btnlistedit").off("click").on("click", this.savelistfn.bind(this));
         }
         if (window.tp === "hash") {
             $("#btnhashedit").show();
             $("#dispval").attr('contenteditable', true);
             $("#savediv").attr('contenteditable', false);
+            $(".btnh_add").show();
+
             $("#btnhashedit").off("click").on("click", this.savehashfn.bind(this));
         }
     };
@@ -560,6 +563,8 @@ var RedisClientJS = function () {
                 success: function () {
                     alert("success");
                     $("#btnlistedit").hide();
+                    $(".btnl_add").hide();
+
                 }
             });
          
@@ -586,6 +591,8 @@ var RedisClientJS = function () {
                 success: function () {
                     alert("success");
                     $("#btnhashedit").hide();
+                    $(".btnh_add").hide();
+
                 }
             });
 
