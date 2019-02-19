@@ -18,8 +18,9 @@ namespace EbControllers
     public class EbRedisManagerController : Controller
     {
 
+        
+        static readonly string redisConnectionString = string.Format("redis://{0}@{1}:{2}", "bU5CoCPP8qGz","35.244.41.100", "6379");
         RedisClient _redis = new RedisClient(redisConnectionString);
-        static readonly string redisConnectionString = string.Format("connectionstring");
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -211,6 +212,18 @@ namespace EbControllers
         public void ListValEdit(string l_keyid, string dict)
         {
             Dictionary<int, string> val = JsonConvert.DeserializeObject<Dictionary<int, string>>(dict);
+           
+          int v=  Convert.ToInt32(_redis.LLen(l_keyid));
+            int i;
+
+            for (i = v; i < val.Count; i++)
+
+            {
+                var lv = Encoding.UTF8.GetBytes(val[i]);
+            _redis.RPush(l_keyid,lv);
+              
+             }
+
             foreach (var item in val)
             {
                 var listval = Encoding.UTF8.GetBytes(item.Value);

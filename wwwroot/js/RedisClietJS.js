@@ -161,14 +161,15 @@
 
 
 var RedisClientJS = function () {
-    this.currentGrpLink = null;//
+    this.currentGrpLink = null;
     this.subnm = null;
     this.temp = null;
     this.indx = null;
     this.listeditval = null;
+    this.incr = null;
     window.tp = null;
     this.keynm = null;
-
+   
 
    
 
@@ -276,20 +277,36 @@ var RedisClientJS = function () {
                                            </div >`
 
                                 let html1 = `<table class="listtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}">
-                                            <tr><th>#</th> <th>MEMBERS</th></tr>`;
+                                             <thead><tr><th>#</th> <th>MEMBERS</th></tr></thead><tbody>`;
 
                                 //this.SubName = $(ev.target).closest(".listtable").text();
                                 $.each(ob.obj, function (i) {
                                     var k = "lst" + i;
                                     html1 += `<tr id="${i}" tabindex="${i}" class="listlink"><td class="tdlistid"   style="width:5%" contenteditable="false">${i}</td> <td class="tdlistval">${ob.obj[i]}</td>
                                    </tr>`;
+                                    
                                 });
-                                html1 += `</table>`;
-
+                                html1 += `</tbody></table><input type="button" class="btn btn-default btnl_add" value="+" id="btnl+" />`;
+                               
+                               
                                 // $("#dispval").empty().append(JSON.stringify(ob.obj));
+                                
                                 $("#savediv").empty().append(html);
                                 $(`#btnlistedit`).hide();
                                 $("#dispval").empty().append(html1);
+                                $(".btnl_add").hide();
+                                $(".btnl_add").click(function () {
+                                    this.incr += 1;
+                                    
+                                   // let html = `<tr  class="listlink"><td>${ob.obj.length} </td><td></td></tr>`;
+                                    let html=    `<tr id="${ob.obj.length}" tabindex="${ob.obj.length}" class="listlink"><td class="tdlistid"   style="width:5%" contenteditable="false">${ob.obj.length}</td> <td class="tdlistval"></td>
+                                   </tr>`;
+
+                                    $("table tbody").append(html);
+                                    ob.obj.length++;
+                                    // $(`#table_${this.subnm}`).append(html);
+
+                                }).bind(this);
                                 //$(".listsave").hide();
                             }
                             else
@@ -301,17 +318,28 @@ var RedisClientJS = function () {
                                            </div >`
                                     //border = "1" width = "100" style = "width:100%"
                                     var html = `<table  class="hashtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" >
-                                             <tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr>`;
+                                           <thead><tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr></thead><tbody>`;
                                     let c = 0;
                                     $.each(ob.obj, function (i, k) {
 
                                         html += `<tr  id="${c}" tabindex="${c}" class="hashlink"> <td style="width:5%" contenteditable="false"> ${c++} </td><td style="width:40%" class="tdhashfield">${i}</td><td class="tdhashval">${k}</td></tr>`;
                                     });
-                                    html += `</table>`;
+                                    html += `</tbody></table><input type="button" class="btn btn-default btnh_add" value="+" id="btnh+" />`
                                     // $("#dispval").empty().append(JSON.stringify(html));
                                     $("#savediv").empty().append(html2);
                                     $(`#btnhashedit`).hide();
                                     $("#dispval").empty().append(html);
+                                    $(".btnh_add").hide();
+                                    $(".btnh_add").click(function () {
+                                        this.incr += 1;
+                                        let html= `<tr  id="${c}"class="hashlink"> <td style="width:5%" contenteditable="false"> ${c++} </td><td style="width:40%" class="tdhashfield"></td><td class="tdhashval"></td></tr>`;
+                                     
+
+                                        $("table tbody").append(html);
+                                        ob.obj.length++;
+                                        // $(`#table_${this.subnm}`).append(html);
+
+                                    }).bind(this);
                                 }
                     }
                 });
@@ -534,12 +562,14 @@ var RedisClientJS = function () {
         if (window.tp === "list") {
             $("#btnlistedit").show();
             $("#dispval").attr('contenteditable', true);
+            $(".btnl_add").show();
             $("#savediv").attr('contenteditable', false);
             $("#btnlistedit").off("click").on("click", this.savelistfn.bind(this));
         }
         if (window.tp === "hash") {
             $("#btnhashedit").show();
             $("#dispval").attr('contenteditable', true);
+            $(".btnh_add").show();
             $("#savediv").attr('contenteditable', false);
             $("#btnhashedit").off("click").on("click", this.savehashfn.bind(this));
         }
@@ -560,6 +590,7 @@ var RedisClientJS = function () {
                 success: function () {
                     alert("success");
                     $("#btnlistedit").hide();
+                    $(".btnl_add").hide();
                 }
             });
          
@@ -586,6 +617,7 @@ var RedisClientJS = function () {
                 success: function () {
                     alert("success");
                     $("#btnhashedit").hide();
+                    $(".btnh_add").hide();
                 }
             });
 

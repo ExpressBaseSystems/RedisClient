@@ -14,17 +14,18 @@
 }
 .txtboxwidth {
     width: 95%;
-  
     display: inline;
     height: auto;
     margin: 0;
     box-shadow: none;
     border-radius: 0;
+    
     /*background-color: transparent;*/
     border: 0;
-    cursor:auto;
+    cursor: auto;
+    border-color: #080808;
 }
-}
+
 .margin0 {
     margin-top: 7px;
 }
