@@ -45,8 +45,8 @@ namespace EbControllers
             {
                 lst2.Add(n);
             }
-            ViewBag.tlst = lst;
-            ViewBag.klist = JsonConvert.SerializeObject(lst2);
+            ViewBag.grplst = lst;
+            ViewBag.allkeylist = JsonConvert.SerializeObject(lst2);
             return View();
         }
 

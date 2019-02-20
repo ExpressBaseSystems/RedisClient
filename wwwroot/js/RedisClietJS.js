@@ -204,25 +204,23 @@ var RedisClientJS = function () {
     this.groupClick = function (ev) {
         this.currentGrpLink = ev.target;
         $('#smallbtn').hide();
-
+        $(`#outerdisp`).hide();
+        $('#btnkeys a[href="#dispvalue"]').tab('show');
         this.GroupName = $(ev.target).closest(".grp_link").attr("data-ptn");
         let data = [];
         //  var p = "^" + this.GroupName;
         var p = this.GroupName;
         for (let i = 0; i < _temp.length; i++) {
             var k = _temp[i];
-
             var match = (k.match(p));
             if (match != null) {
                 data.push(k);
             }
-
         }
         let h = [];
         for (let i = 0; i < data.length; i++) {
             h.push(`<li class="sub_link list-group-item" ><a>${data[i]}</a></li>`);
         }
-
         $(`#subkeydiv`).empty().append(h.join(""));
 
         $(`#savediv`).hide();
@@ -232,7 +230,7 @@ var RedisClientJS = function () {
     };
 
     this.subClick = function (ev) {
-        
+        $(`#outerdisp`).show();
         $(`#savediv`).show();
         $(`#dispval`).show();
         $("#dispval").attr('contenteditable', false);
@@ -399,12 +397,14 @@ var RedisClientJS = function () {
                         $("#dispval").empty();
                         $('#smallbtn').hide();
                         $("#dispval").hide();
+                        $(`#outerdisp`).hide();
                         this.Allkeysfn();
                     }
                     else {
                         alert("Key not found");
                         $("#dispval").empty();
                         $("#dispval").hide();
+                        $(`#outerdisp`).hide();
                     }
                 }.bind(this)
             });
@@ -647,6 +647,8 @@ var RedisClientJS = function () {
     };
 
     this.Keysearchfn = function () {
+
+    
         var ptn;
         var objptn = $("#ptns").val();
         if (objptn == 1)
@@ -794,6 +796,8 @@ var RedisClientJS = function () {
     };
 
     this.Showkeys = function (list1) {
+
+        $('#btnkeys a[href="#dispvalue"]').tab('show');
         this.currentGrpLink = null;
         $('#subkeydiv').empty()
         //border = "1" width = "100" style = "width:100%
@@ -811,15 +815,15 @@ var RedisClientJS = function () {
 
     };
 
-    this.Jsonviewfn = function (ev) {
+    this.Jsonviewfn = function () {
         $(`#savediv`).hide();
         //$(`#dispval`).empty();
         $("#dispval").attr('contenteditable', false);
-        if ((this.keynm != "")) {/////subnm
+        if ((this.keynm != "")) {
             $.ajax(
                 {
                     url: "EbRedisManager/FindVal",
-                    data: { "key_name": this.keynm },/////subnm
+                    data: { "key_name": this.keynm },
                     cache: false,
                     type: "POST",
                     success: function (ob) {
