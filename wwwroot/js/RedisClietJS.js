@@ -264,14 +264,14 @@ var RedisClientJS = function () {
                         }
                         //<div style=" display: inline-block;  float: right; "  >  /div> 
                         else
-                            if ((ob.type === "list") || (ob.type === "set") || (ob.type === "zset")) {
+                            if ((ob.type === "list") || (ob.type === "set")) {
                                 var html = `<div>
                                                 <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}
                                                 <input type="button" id="btnlistedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-7" value="Save" />
                                                   </div >
                                            </div >`
 
-                                let html1 = `<table class="listtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}">
+                                let html1 = `<table class="listtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" contenteditable="false">
                                              <thead><tr><th>#</th> <th>MEMBERS</th></tr></thead><tbody>`;
 
                                 //this.SubName = $(ev.target).closest(".listtable").text();
@@ -301,18 +301,18 @@ var RedisClientJS = function () {
                                     ob.obj.length++;
                                     // $(`#table_${this.subnm}`).append(html);
 
-                                }).bind(this);
+                                }.bind(this));
                                 //$(".listsave").hide();
                             }
                             else
-                                if (ob.type === "hash") {
+                                if ((ob.type === "hash")|| (ob.type === "zset")) {
                                     var html2 = `<div>
                                                 <div  height=10%> <strong>KEY :</strong>${ob.key}&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong> TYPE :</strong> ${ob.type}
                                                 <input type="button" id="btnhashedit" rediskey="${ob.key}" class="btn btn-xs btn-info col-md-offset-7" value="Save" />
                                                   </div >
                                            </div >`
                                     //border = "1" width = "100" style = "width:100%"
-                                    var html = `<table  class="hashtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" >
+                                    var html = `<table  class="hashtable table table-striped table table-bordered table-hover table-responsive" id="table_${ob.key}" contenteditable="false" >
                                            <thead><tr><th>#</th> <th> FIELD</th><th>VALUE</th></tr></thead><tbody>`;
                                     let c = 0;
                                     $.each(ob.obj, function (i, k) {
@@ -334,7 +334,7 @@ var RedisClientJS = function () {
                                         ob.obj.length++;
                                         // $(`#table_${this.subnm}`).append(html);
 
-                                    }).bind(this);
+                                    }.bind(this));
                                 }
 
                     }
@@ -534,15 +534,25 @@ var RedisClientJS = function () {
         }
         if (window.tp === "list") {
             $("#btnlistedit").show();
-            $("#dispval").attr('contenteditable', true);
+            $(`#table_${this.subnm}`).attr('contenteditable', true);
             $(".btnl_add").show();
             $("#savediv").attr('contenteditable', false);
             $(".btnl_add").show();
+            
             $("#btnlistedit").off("click").on("click", this.savelistfn.bind(this));
         }
-        if (window.tp === "hash") {
+        if (window.tp === "set") {
+            $("#btnlistedit").show();
+            $(`#table_${this.subnm}`).attr('contenteditable', true);
+            $(".btnl_add").show();
+            $("#savediv").attr('contenteditable', false);
+            $(".btnl_add").show();
+
+            $("#btnlistedit").off("click").on("click", this.savesetfn.bind(this));
+        }
+        if ((window.tp === "hash") || (window.tp === "zset")) {
             $("#btnhashedit").show();
-            $("#dispval").attr('contenteditable', true);
+            $(`#table_${this.subnm}`).attr('contenteditable', true);
             $(".btnh_add").show();
             $("#savediv").attr('contenteditable', false);
             $(".btnh_add").show();
@@ -600,6 +610,32 @@ var RedisClientJS = function () {
             });
 
             $("#dispval").attr('contenteditable', false );
+        }
+        else {
+            alert("Value not Specified");
+        }
+    };
+    this.savesetfn = function (ev) {
+        var ob2 = {};
+        $(`#table_${this.subnm}`).find(".listlink").each(function (i, o) {
+            ob2[eval($(o).attr("id"))] = $(o).find(".tdlistval").text().trim();
+        });
+
+        if (!$.isEmptyObject(ob2)) {
+            $.ajax({
+                url: "EbRedisManager/SetValEdit",
+                data: { l_keyid: this.subnm, dict: JSON.stringify(ob2) },
+                cache: false,
+                type: "POST",
+                success: function () {
+                    alert("success");
+                    $("#btnlistedit").hide();
+                    $(".btnl_add").hide();
+
+                }
+            });
+
+            $("#dispval").attr('contenteditable', false);
         }
         else {
             alert("Value not Specified");
