@@ -18,8 +18,9 @@ namespace EbControllers
     public class EbRedisManagerController : Controller
     {
 
-        RedisClient _redis = new RedisClient(redisConnectionString);
+        
         static readonly string redisConnectionString = string.Format("connectionstring");
+        RedisClient _redis = new RedisClient(redisConnectionString);
         // GET: /<controller>/
         public IActionResult Index()
         {
@@ -154,7 +155,8 @@ namespace EbControllers
             }
             else if (type == "zset")
             {
-                val = _redis.GetAllItemsFromSortedSet(key_name);
+                // val = _redis.GetAllItemsFromSortedSet(key_name);
+               val= _redis.GetAllWithScoresFromSortedSet(key_name);
             }
             return new FindValClass { Key = key_name, Obj = val, Type = type };
 
@@ -236,15 +238,40 @@ namespace EbControllers
                 _redis.LSet(l_keyid, item.Key, listval);
             }
         }
+        public void SetValEdit(string l_keyid, string dict)
+        {
+            Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);
+           
+                foreach (var item in val)
+                {
+                    var setval = Encoding.UTF8.GetBytes(item.Value);
+                    _redis.SAdd(l_keyid, setval);
+                }
+            
+        }
+
 
         public void HashValEdit(string h_keyid, string dict)
         {
             Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);
-            foreach (var item in val)
+            var tp = _redis.Type(h_keyid);
+            if (tp == "zset")
             {
-                var field = Encoding.UTF8.GetBytes(item.Key);
-                var v = Encoding.UTF8.GetBytes(item.Value);
-                _redis.HSet(h_keyid, field, v);
+                foreach (var item in val)
+                {
+                    double scor = Convert.ToDouble(item.Value);
+                    var zsethval = Encoding.UTF8.GetBytes(item.Key);
+                    _redis.ZAdd(h_keyid, scor, zsethval);
+                }
+            }
+            if (tp == "hash")
+            {
+                foreach (var item in val)
+                {
+                    var field = Encoding.UTF8.GetBytes(item.Key);
+                    var v = Encoding.UTF8.GetBytes(item.Value);
+                    _redis.HSet(h_keyid, field, v);
+                }
             }
 
         }
