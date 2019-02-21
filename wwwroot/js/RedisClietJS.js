@@ -174,9 +174,7 @@ var RedisClientJS = function () {
     this.init = function () {
 
         this.pjson = new EbPrettyJson();
-        $(".grp_link").off("click").on("click", this.groupClick.bind(this));
-        //$(`#sub_${this.GroupName}`).off("click").on("click", this.subClick.bind(this));
-        // $(".sub_ink").off("click").on("click", this.subClick.bind(this));
+        $("#keyslist").off("click").on("click",".grp_link", this.groupClick.bind(this));
         $("#btninset").off("click").on("click", this.Keyinsertfn.bind(this));
         $("#btngrpinsert").off('click').on("click", this.GroupPatternfn.bind(this));
         $("#Btnsrch").off('click').on('click', this.Keysearchfn.bind(this));
@@ -184,7 +182,6 @@ var RedisClientJS = function () {
         $("#btnkeys").off('click').on('click', this.Allkeysfn.bind(this));
         $("#btnlpush").off('click').on('click', this.ListInsertLpushfn.bind(this));
         $("#btnrpush").off('click').on('click', this.ListInsertRpushfn.bind(this));
-        //$("#btnlistkey").off('click').on('click', this.ListInsertpushfn.bind(this));
         $("#btnlistcancel").off('click').on('click', this.listCancel.bind(this));
         $("#btnhashinsert").off('click').on('click', this.HashInsertfn.bind(this));
         $("#btnhashcancel").off('click').on('click', this.HashCancel.bind(this));
@@ -237,7 +234,7 @@ var RedisClientJS = function () {
         $("#dispval").attr('contenteditable', false);
         this.SubName = $(ev.target).closest(".sub_link").text();
         this.subnm = this.SubName;
-        this.keynm = this.SubName;///
+        this.keynm = this.SubName;
         $('#smallbtn').show();
         if ((this.SubName != "")) {
             $.ajax(
@@ -249,7 +246,6 @@ var RedisClientJS = function () {
                     success: function (ob) {
                         window.tp = ob.type;
                        
-                      //  let htm = `${val}`;
                         if (ob.type === "string") {
                             var html = `<div> 
                                             <div  height=10%> <strong>KEY :</strong>${ob.key}  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>TYPE :</strong>${ob.type} 
@@ -400,6 +396,10 @@ var RedisClientJS = function () {
                         $("#dispval").hide();
                         $(`#outerdisp`).hide();
                         this.Allkeysfn();
+                        var str = this.subnm;
+                        if (str.indexOf("Grp_") == 0) {
+                            $(".keyslist li:has('grp_name'):contains('dfg')").remove();
+                        }
                     }
                     else {
                         alert("Key not found");
@@ -440,8 +440,6 @@ var RedisClientJS = function () {
         }
     };
 
-   
-
     this.GroupPatternfn = function () {
         if (($("#txtnm").val() != "") && ($("#txtptn").val() != "")) {
             var regptn = btoa($("#txtptn").val());
@@ -452,16 +450,18 @@ var RedisClientJS = function () {
                 cache: false,
                 type: "POST",
                 success: function () {
+                    var ad = `<li>    <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="${$("#txtptn").val()}" grp_name="${$("#txtnm").val()}">${$("#txtnm").val()}</a></li>`
                     alert("success");
-                    $("txtnm").val('');
-                    $("txtptn").val('');
+                    $("#txtnm").val('');
+                    $("#txtptn").val('');
+                    $("#keyslist").append(ad);
                 }
             });
         }
         else {
             alert("Please Specify Group Name and pattern");
-            $("txtnm").val('');
-            $("txtptn").val('');
+            $("#txtnm").val('');
+            $("#txtptn").val('');
         }
     };
 
@@ -668,6 +668,7 @@ var RedisClientJS = function () {
     };
 
     this.Regxfn = function () {
+
         if ($("#txtregex").val() != "") {
             var ptn;
             ptn = $("#txtregex").val();
@@ -681,13 +682,13 @@ var RedisClientJS = function () {
                 type: "POST",
                 success: this.Showkeys.bind(this)
             });
+            $('#smallbtn').hide();
+            $(`#outerdisp`).hide();
         }
         else { alert("Please Specify the regular expresion"); }
     };
 
     this.Keysearchfn = function () {
-
-    
         var ptn;
         var objptn = $("#ptns").val();
         if (objptn == 1)
@@ -703,6 +704,8 @@ var RedisClientJS = function () {
             type: "POST",
             success: this.Showkeys.bind(this)
         });
+        $('#smallbtn').hide();
+        $(`#outerdisp`).hide();
     };
     
     this.ListInsertLpushfn = function () {
@@ -798,6 +801,7 @@ var RedisClientJS = function () {
         $("#txtsetkey").val('');
         $("#txtsetval").val('');
     };
+
     this.SortedsetInsertfn = function () {
         if (($("#txtsortedsetscr").val() != "") && ($("#txtsortedsetval").val() != "")) {
             $.ajax({
@@ -814,6 +818,7 @@ var RedisClientJS = function () {
             });
         }
     };
+
     this.SortedsetCancel = function () {
         $("#txtsortedsetkey").val('');
         $("#txtsortedsetscr").val('');
@@ -839,14 +844,11 @@ var RedisClientJS = function () {
         $('#btnkeys a[href="#dispvalue"]').tab('show');
         this.currentGrpLink = null;
         $('#subkeydiv').empty()
-        //border = "1" width = "100" style = "width:100%
-        //let html = `<table class="table table-bordered table-stripped">
-        //          <tr> <td>KEY</td</tr>`;
         let html = [];
          list1 = list1.sort();
         $.each(list1, function (i) {
             html.push(`<li class="sub_link list-group-item  " ><a>${list1[i]}</a></li>`);
-            // html += `<tr> <td>${i}</td></tr>`;
+          
         });
         //html += `</table>`;
         //$("#subkeydiv").append(html);
@@ -871,9 +873,6 @@ var RedisClientJS = function () {
                 });
         }
     }
-
-
-    
     
     this.init();
 };
