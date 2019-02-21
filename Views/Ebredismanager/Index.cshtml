@@ -44,10 +44,10 @@
                 <h4> <label class="label label-info">Groups</label></h4>
                 <ul id="keyslist" class="nav nav-pills nav-stacked scrol ">
                     @{
-                        foreach (EbGroup p in @ViewBag.tlst)
+                        foreach (EbGroup p in @ViewBag.grplst)
                         {
                             <li>
-                                <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="@p.Pattern" grp_name="@p">@p.Name</a>
+                                <a class="grp_link list-group-item" role="tab" href="#dispvalue" data-toggle="tab" data-ptn="@p.Pattern" grp_name=@p.Name>@p.Name</a>
                                 @*<ul id="sub_@p.pattern"></ul>*@
                             </li>
                         }
@@ -115,7 +115,7 @@
                             </div>
                             <div class="row">
                                 <div id="outerdisp" class=" position-relative borderstyle  col-md-8  margin0 marginleft " style=" padding-top:1px; padding-left: 1px;
-                                      padding-right: 1px;">
+                                      padding-right: 1px;" hidden>
                                     <div id="smallbtn" hidden style=" margin-bottom: 3px;">
                                         <input type="button" id="btnkeydel" value="Delete" class="btn btn-info btn-xs" />
                                         <input type="button" id="btnrename" value="Rename" class="btn btn-xs btn-info" role="tab" href="#" data-toggle="modal" data-target="#modalrename" />
@@ -320,7 +320,7 @@
                 </div>
                 <div class="modal-footer">
                     <input type="button" id="btnsortedsetkey" value="OK" role="tab" data-toggle="modal" data-target="#modalsortedsetval" class="btn btn-primary" data-dismiss="modal" />
-
+                    
                 </div>
             </div>
         </div>
@@ -437,7 +437,7 @@
 
         $(document).ready(function () {
 
-            _temp = @Html.Raw(ViewBag.klist);
+            _temp = @Html.Raw(ViewBag.allkeylist);
             auto_arr =@Html.Raw(Json.Serialize(ViewBag.cmdbag));
                 var client = new RedisClientJS();
 
@@ -469,19 +469,6 @@
 
 
 
-
-    @*<div class="ui-pnotify stack-bottomright" style="width: 300px; right: 5px; bottom: 25px; opacity: 1; display: block; cursor: auto;">
-            <div class="btn btn-success ui-pnotify-container pnotify-without-title" style="min-height: 16px;">
-                <div class="ui-pnotify-closer" style="cursor: pointer; visibility: visible; display: none;">Close all
-                 </div>
-             <div class="ui-pnotify-sticker" style="cursor: pointer; visibility: hidden; display: none;">
-                 <span class="icon-pause"></span>
-              </div>
-                <h4 class="ui-pnotify-title" style="display: none;"></h4>
-                <div class="ui-pnotify-text">Key renamed to <strong>Alapuzha12</strong>
-                </div>
-            </div>
-        </div>*@
 
 
 
