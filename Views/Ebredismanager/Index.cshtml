@@ -103,11 +103,8 @@
 
                         <div id="termnl" class="tab-pane fade position-relative borderstyle  margin0 marginleft scrol" style=" padding-top:1px; padding-left: 1px;
                               padding-right: 1px;">
-                            <div id="divterminal" style=" background-color: #0f1315; color: #f5f2f2;" class="scrol">
-                                >> <input type="text" class="active terminalcls txtboxwidth " style=" background-color: #0f1315; color: #6ce890;" autofocus>
-                                <div class="tresponse" style=" background-color: #0f1315; color: #2795ee;">
-                                </div>
-                            </div>
+                            <div id="divterminal" style=" background-color: #0f1315; color: #f5f2f2;" class="scrol divterm">
+                           </div>
 
 
 
@@ -446,9 +443,19 @@
 
 
         });
-
         $("#keyslist").click(function () {
             $('#dispval').empty();
+        });
+        
+        $("#tabterminal").click(function () {
+            $('#divterminal').empty();
+            //$('.terminalcls').val('');
+            //$('.divanswer').empty();
+            let html = `>> <input type="text" class="active terminalcls txtboxwidth " style=" background-color: #0f1315; color: #6ce890;" autofocus>
+                                <div class="tresponse" style=" background-color: #0f1315; color: #2795ee;">
+                                </div> `;
+            $('#divterminal').append(html);
+           
         });
         //$("#subkeydiv").click(function () {
         //    $('#dispval').show();

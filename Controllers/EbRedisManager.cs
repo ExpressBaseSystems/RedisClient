@@ -17,13 +17,13 @@ namespace EbControllers
 {
     public class EbRedisManagerController : Controller
     {
-
-        
+       
         static readonly string redisConnectionString = string.Format("connectionstring");
         RedisClient _redis = new RedisClient(redisConnectionString);
+
         // GET: /<controller>/
         public IActionResult Index()
-        {
+        {            
             List<string> cmdlst = new List<string>();
             Type t = typeof(Commands);
             FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);
@@ -241,11 +241,11 @@ namespace EbControllers
         public void SetValEdit(string l_keyid, string dict)
         {
             Dictionary<string, string> val = JsonConvert.DeserializeObject<Dictionary<string, string>>(dict);
-           
-                foreach (var item in val)
+            _redis.SPop(l_keyid,Convert.ToInt32(_redis.SCard(l_keyid)));
+            foreach (var item in val)
                 {
                     var setval = Encoding.UTF8.GetBytes(item.Value);
-                    _redis.SAdd(l_keyid, setval);
+                _redis.SAdd(l_keyid, setval);
                 }
             
         }
@@ -257,10 +257,12 @@ namespace EbControllers
             var tp = _redis.Type(h_keyid);
             if (tp == "zset")
             {
+                _redis.ZRemRangeByRank(h_keyid, 0, -1);
                 foreach (var item in val)
                 {
                     double scor = Convert.ToDouble(item.Value);
                     var zsethval = Encoding.UTF8.GetBytes(item.Key);
+                    
                     _redis.ZAdd(h_keyid, scor, zsethval);
                 }
             }
@@ -277,7 +279,7 @@ namespace EbControllers
         }
         public object Terminal(string cmd)
         {
-
+            int flag = 0;
             try
             {
 
@@ -289,10 +291,12 @@ namespace EbControllers
                     List<string> terminal_list = new List<string>();
                     foreach (var child in rd.Children)
                     {
+                        flag = 1;
                         terminal_list.Add(child.Text);
                     }
-
-                    return terminal_list;
+                    if (flag == 1)
+                        return terminal_list;
+                    else return "Invalid Entry";
 
                 }
                 else

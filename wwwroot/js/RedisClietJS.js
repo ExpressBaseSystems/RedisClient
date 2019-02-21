@@ -199,7 +199,7 @@ var RedisClientJS = function () {
         $("#btnjsonview").off("click").on("click", this.Jsonviewfn.bind(this));
 
         $("#divterminal").on("keypress", ".terminalcls", this.Terminalfn.bind(this));
-        //$(".terminalcls").off("keypress").on("keypress", this.Terminalfn.bind(this));
+   
     };
 
     this.groupClick = function (ev) {
@@ -466,19 +466,20 @@ var RedisClientJS = function () {
     };
 
     this.Terminalfn = function (e) {
+        
         var tar = e.target;
         var keycode = e.which;
         auto_arr = auto_arr.sort();
       
         $(tar).autocomplete({
             source: auto_arr,
-            classes: {
+            //classes: {
 
-                "ui-autocomplete": "highlight",
-                "ui-autocomplete": "height",
-                "ui-autocomplete": "width"
+            //    //"ui-autocomplete": "highlight",
+            //    //"ui-autocomplete": "height",
+            //    //"ui-autocomplete": "width"
 
-            },
+            //},
             autoFocus: true,
             minLength: 2,
            
@@ -495,7 +496,7 @@ var RedisClientJS = function () {
                     var t = typeof (val);
                     $(tar).prop('disabled', true);
                     if (t === "string") {
-                        var html = `<div> 
+                        var html = `<div class="divanswer"> 
                                   &nbsp &nbsp &nbsp &nbsp &nbsp${val}
                                    </div>`;
                         $(tar).next(".tresponse").empty().append(html);
@@ -512,13 +513,12 @@ var RedisClientJS = function () {
                         html2 += `</table>`;
                         $(tar).next(".tresponse").empty().append(html2);
                     }
-                    
-                    
                     $("#divterminal").append(` >> <input type="text" class="active terminalcls txtboxwidth "  style=" background-color: #0f1315; color: #6ce890;" autofocus>
                     <div  class="tresponse"  style=" background-color: #0f1315; color: #2795ee;">
-                   </div>`)
+                   </div>`);
                                
                 }.bind(this)
+
             });
           
 
